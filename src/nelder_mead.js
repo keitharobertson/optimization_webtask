@@ -2,8 +2,6 @@
 import { Vertex } from './vertex';
 
 // define the nelder mead process
-// this could be abstracted to handling arbitrary functions with arbitrary number
-// of variables, but it is more readable for this example if explicitly using 2
 export class NelderMead {
 	constructor(initialGuess, valueFunction) {
 		if( !Array.isArray(initialGuess) || initialGuess.length < 1) {
@@ -21,6 +19,7 @@ export class NelderMead {
 		);
 		this.worstVertex = new Vertex();
 	}
+	// any time the verticies are set, thye should also be sorted by value so use a setter
 	set vertices(verts) {
 		this._vertices = verts.map( (v) => new Vertex(v, this.valueFunction));
 		this.order();
