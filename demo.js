@@ -47,7 +47,7 @@ return `
 			<textarea rows="4" cols="60" name='targetFunction'>${targetFunctionString}</textarea><br />
 			<b>initial Guess:</b><br />
 			Input comma separated initial guesses for each of the optimization parameters<br/>
-			for the function above in the same order as they appear in the argument list<br/>
+			for the function above in the same order as they appear in the argument list.<br/>
 			There must be the same number of initial guesses in this box as there are optmization<br/>
 			parameters in the target function.<br/>
 			<textarea rows="2" cols="60" name='initialGuess'>${initialGuess.join(', ')}</textarea><br />
