@@ -61,6 +61,13 @@ function runOptimization(y, observedData, initialGuess) {
 	return nm.getNthPoint(0);
 }
 
+function getRSquared(observedData, y, optimizedParams) {
+	let mean = observedData.reduce( (sum, value) => sum + value[1], 0 ) / observedData.length;
+	let SStot = observedData.reduce( (sum, value) => sum + Math.pow(value[1] - mean, 2), 0 );
+	let SSres = observedData.reduce( (sum, value) => sum + Math.pow(value[1] - y(value[0], ...optimizedParams), 2), 0 );
+	return 1 - (SSres / SStot);
+}
+
 
 module.exports = function(context, req, res) {
 	getBody(req).then( (body) => {
@@ -73,6 +80,7 @@ module.exports = function(context, req, res) {
 		let error = '';
 		let optimizedParams = [];
 		let observedData = [];
+		let rSquared = 0;
 		if(y.length !== initialGuess.length + 1) {
 			res.writeHead(400);
 			error = 'There must be as many initial guess parameters as there are unknowns';
@@ -80,9 +88,10 @@ module.exports = function(context, req, res) {
 			observedData = (body.editManually && body.observedData) ? body.observedData : defaultObservedData(y, initialGuess);
 			optimizedParams = runOptimization(y, observedData, initialGuess);
 			fit = observedData.map( (point) => [point[0], y(point[0], ...optimizedParams)]);
+			rSquared = getRSquared(observedData, y, optimizedParams);
 			res.writeHead(200, { 'Content-Type': 'text/html '});
 		}
 
-		res.end(template(error, fit, optimizedParams, targetFunctionString, initialGuess, observedData, body.editManually));
+		res.end(template(error, fit, optimizedParams, rSquared, targetFunctionString, initialGuess, observedData, body.editManually));
 	});
 };

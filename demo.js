@@ -1,7 +1,7 @@
 'use strict';
 
 // templated html page to serve
-export default function(error, fit, optimizedParams, targetFunctionString, initialGuess, observedData, editManually) {
+export default function(error, fit, optimizedParams, rSquared, targetFunctionString, initialGuess, observedData, editManually) {
 return `
 <!DOCTYPE HTML>
 <html>
@@ -35,17 +35,26 @@ return `
 		</script>
 		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	</head>
-	<body>
-		<div id="chartContainer" style="height: 300px; width: 100%;"></div><br />
-		<b>Optimized parameters: ${optimizedParams.join(', ')}</b><br />
+	<body style="font-family: Arial, Helvetica, sans-serif">
+		<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+		<h3>Optimized parameters: ${optimizedParams.join(', ')}</h3>
+		<h5>R<sup>2</sup>: ${rSquared}</h5>
 		<div style='color:red'>${error}</div><br />
-		<form action='/node_dev' method='POST'>
-			Target Function:<br />
-			<textarea rows="5" cols="60" name='targetFunction'>${targetFunctionString}</textarea><br />
-			initial Guess:<br />
-			<textarea rows="4" cols="60" name='initialGuess'>${initialGuess.join(', ')}</textarea><br />
-			Data to Fit (<input type="checkbox" onClick="toggleObservedDataEdit()" name="editManually" id="editManually" ${editManually ? 'checked' : ''}/>Edit Manually):<br />
-			<textarea rows="15" cols="60" name='observedData' id='observedData'>${observedData.map( (point) => point.join(', ')).join('\n')}</textarea><br />
+		<form method='POST'>
+			<b>Target Function:</b><br />
+			Input the target function in the format<br />
+			function(x, param_to_be_optimized_1, param_to_be_optimized_2, ...){ ... }<br />
+			<textarea rows="4" cols="60" name='targetFunction'>${targetFunctionString}</textarea><br />
+			<b>initial Guess:</b><br />
+			Input comma separated initial guesses for each of the optimization parameters<br/>
+			for the function above in the same order as they appear in the argument list<br/>
+			There must be the same number of initial guesses in this box as there are optmization<br/>
+			parameters in the target function.<br/>
+			<textarea rows="2" cols="60" name='initialGuess'>${initialGuess.join(', ')}</textarea><br />
+			<b>Data to Fit</b> (<input type="checkbox" onClick="toggleObservedDataEdit()" name="editManually" id="editManually" ${editManually ? 'checked' : ''}/>Edit Manually):<br />
+			Leave the "Edit Manually" checkbox unchecked to have sample data automatically generated.<br/>
+			If you wish to edit the input data manually, check the box.<br/>
+			<textarea rows="8" cols="60" name='observedData' id='observedData'>${observedData.map( (point) => point.join(', ')).join('\n')}</textarea><br />
 			<input type='submit' />
 		</form>
 	</body>
